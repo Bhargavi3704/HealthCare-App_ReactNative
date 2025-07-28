@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const DEFAULT_IMAGE = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOJk-ijRB_BPwJHcBC6FdinircAPdW6aHY3A&s';
 
@@ -48,9 +49,21 @@ const features = [
     screen: 'MedicineScreen',
     color: '#f3e5f5',
   },
+  {
+    name: 'Blood Bank',
+    icon: 'blood-bag',
+    screen: 'BloodBankScreen',
+    color: '#fdecea',
+  },
+  {
+    name: 'Ambulance',
+    icon: 'ambulance',
+    screen: 'AmbulanceScreen',
+    color: '#e0f7fa',
+  },
 ];
 
-const HomeScreen = ({ navigation }) => {
+const Home = ({ navigation }) => {
   const [user, setUser] = useState(null);
   useEffect(() => {
     const loadUserData = async () => {
@@ -70,26 +83,27 @@ const HomeScreen = ({ navigation }) => {
           <Text style={styles.username}>{user?.name}</Text>
         </View>
       </View>
-
-      <FlatList
-        data={features}
-        keyExtractor={(item) => item.name}
-        numColumns={2}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={[styles.card, { backgroundColor: item.color }]}
-            onPress={() => navigation.navigate(item.screen)}
-          >
-            <Icon name={item.icon} size={43} color="#007AFF" />
-            <Text style={styles.cardText}>{item.name}</Text>
-          </TouchableOpacity>
-        )}
-      />
+      <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+        <FlatList
+          data={features}
+          keyExtractor={(item) => item.name}
+          numColumns={2}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={[styles.card, { backgroundColor: item.color }]}
+              onPress={() => navigation.navigate(item.screen)}
+            >
+              <Icon name={item.icon} size={43} color="#007AFF" />
+              <Text style={styles.cardText}>{item.name}</Text>
+            </TouchableOpacity>
+          )}
+        />
+      </ScrollView>
     </View>
   );
 };
 
-export default HomeScreen;
+export default Home;
 
 const styles = StyleSheet.create({
   container: {
