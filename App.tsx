@@ -31,6 +31,31 @@ import OrderScreen from './Asserts/Screens/OrderScreen';
 import PaymentScreen from './Asserts/Screens/PaymentScreen';
 import SuccessScreen from './Asserts/Screens/SuccessScreen';
 import PreviousOrdersScreen from './Asserts/Screens/PreviousOrderScreen';
+import BloodBankScreen from './Asserts/Screens/BloodBankScreen';
+import AmbulanceScreen from './Asserts/Screens/AmbulanceScreen';
+import AmbulanceNotify from './Asserts/Screens/AmbulanceNotify';
+
+
+import DoctorsHome from './Asserts/Screens/Doctors/DoctorsHome';
+import DoctorsProfile from './Asserts/Screens/Doctors/DoctorsProfile';
+import AppointmentDetails from './Asserts/Screens/Doctors/AppointmentDetails';
+import PatientList from './Asserts/Screens/Doctors/PatientList';
+import ConsultHistoryScreen from './Asserts/Screens/Doctors/ConsultHistoryScreen';
+
+import LabsHome from './Asserts/Screens/Labs/LabsHome';
+import LabsProfile from './Asserts/Screens/Labs/LabsProfile';
+import LabBookings from './Asserts/Screens/Labs/LabBookings';
+import LabHistoryScreen from './Asserts/Screens/Labs/LabHistoryScreen';
+
+import BloodBanksHome from './Asserts/Screens/BloodBanks/BloodBanksHome';
+import BloodBankProfile from './Asserts/Screens/BloodBanks/BloodBankProfile';
+import DonationHistoryScreen from './Asserts/Screens/BloodBanks/DonationHistoryScreen';
+
+import AmbulanceHome from './Asserts/Screens/Ambulance/AmbulanceHome';
+import AmbulanceProfile from './Asserts/Screens/Ambulance/AmbulanceProfile';
+import AmbulanceHistory from './Asserts/Screens/Ambulance/AmbulanceHistory';
+import AmbulanceRequests from './Asserts/Screens/Ambulance/AmbulanceRequests';
+import AmbulanceMapScreen from './Asserts/Screens/Ambulance/AmbulanceMapScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -73,7 +98,30 @@ export default function App() {
           <Stack.Screen name="PaymentScreen" component={PaymentScreen} options={{ headerShown: false }} />
           <Stack.Screen name="SuccessScreen" component={SuccessScreen} options={{ headerShown: false }} />
           <Stack.Screen name="PreviousOrdersScreen" component={PreviousOrdersScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="BloodBankScreen" component={BloodBankScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="AmbulanceScreen" component={AmbulanceScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="AmbulanceNotify" component={AmbulanceNotify} options={{ headerShown: false }} />
 
+          <Stack.Screen name="DoctorsHome" component={DoctorsHome} options={{ headerShown: false }} />
+          <Stack.Screen name="DoctorsProfile" component={DoctorsProfile} options={{ headerShown: false }} />
+          <Stack.Screen name="AppointmentDetails" component={AppointmentDetails} options={{ headerShown: false }} />
+          <Stack.Screen name="PatientList" component={PatientList} options={{ headerShown: false }} />
+          <Stack.Screen name="ConsultHistoryScreen" component={ConsultHistoryScreen} options={{ headerShown: false }} />
+
+          <Stack.Screen name="LabsHome" component={LabsHome} options={{ headerShown: false }} />
+          <Stack.Screen name="LabsProfile" component={LabsProfile} options={{ headerShown: false }} />
+          <Stack.Screen name="LabBookings" component={LabBookings} options={{ headerShown: false }} />
+          <Stack.Screen name="LabHistoryScreen" component={LabHistoryScreen} options={{ headerShown: false }} />
+
+          <Stack.Screen name="BloodBanksHome" component={BloodBanksHome} options={{ headerShown: false }} />
+          <Stack.Screen name="BloodBankProfile" component={BloodBankProfile} options={{ headerShown: false }} />
+          <Stack.Screen name="DonationHistoryScreen" component={DonationHistoryScreen} options={{ headerShown: false }} />
+
+          <Stack.Screen name="AmbulanceHome" component={AmbulanceHome} options={{ headerShown: false }} />
+          <Stack.Screen name="AmbulanceProfile" component={AmbulanceProfile} options={{ headerShown: false }} />
+          <Stack.Screen name="AmbulanceRequests" component={AmbulanceRequests} options={{ headerShown: false }} />
+          <Stack.Screen name="AmbulanceHistory" component={AmbulanceHistory} options={{ headerShown: false }} />
+          <Stack.Screen name="AmbulanceMapScreen" component={AmbulanceMapScreen} options={{ headerShown: false }} />
 
         </Stack.Navigator>
       </NavigationContainer>
