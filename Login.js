@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import {View,Text,TextInput,TouchableOpacity,StyleSheet,SafeAreaView,StatusBar,Alert,Modal,ScrollView} from 'react-native';
+import {
+  View, Text, TextInput, TouchableOpacity, StyleSheet,
+  SafeAreaView, StatusBar, Alert, Modal, ScrollView
+} from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Picker } from '@react-native-picker/picker';
 
 const DEFAULT_IMAGE = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOJk-ijRB_BPwJHcBC6FdinircAPdW6aHY3A&s';
 
@@ -11,35 +15,28 @@ const Login = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [signUpModalVisible, setSignUpModalVisible] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const [showPassword, setShowPassword] = useState(false); //For login
-
-  // Sign-up form state
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [signUpPassword, setSignUpPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [role, setRole] = useState('Patient'); // ✅ default role
 
-  const [showSignUpPassword, setShowSignUpPassword] = useState(false); //For signup
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false); //For confirm
+  const [showSignUpPassword, setShowSignUpPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   useEffect(() => {
     const loadSavedCredentials = async () => {
-      try {
-        const savedEmail = await AsyncStorage.getItem('REMEMBERED_EMAIL');
-        const savedPassword = await AsyncStorage.getItem('REMEMBERED_PASSWORD');
-
-        if (savedEmail && savedPassword) {
-          setEmailOrPhone(savedEmail);
-          setPassword(savedPassword);
-          setRememberMe(true);
-        }
-      } catch (error) {
-        console.error('Failed to load saved credentials', error);
+      const savedEmail = await AsyncStorage.getItem('REMEMBERED_EMAIL');
+      const savedPassword = await AsyncStorage.getItem('REMEMBERED_PASSWORD');
+      if (savedEmail && savedPassword) {
+        setEmailOrPhone(savedEmail);
+        setPassword(savedPassword);
+        setRememberMe(true);
       }
     };
-
     loadSavedCredentials();
   }, []);
 
@@ -51,10 +48,8 @@ const Login = ({ navigation }) => {
 
     try {
       const storedUser = await AsyncStorage.getItem('userData');
-
       if (storedUser) {
         const parsedUser = JSON.parse(storedUser);
-
         const isMatch =
           (parsedUser.email === emailOrPhone || parsedUser.phone === emailOrPhone) &&
           parsedUser.password === password;
@@ -68,7 +63,22 @@ const Login = ({ navigation }) => {
             await AsyncStorage.removeItem('REMEMBERED_PASSWORD');
           }
 
-          navigation.navigate('Main');
+          await AsyncStorage.setItem('userProfile', JSON.stringify(parsedUser));
+
+          // ✅ Navigate based on role
+          const role = parsedUser.role;
+          if (role === 'Doctor') {
+            navigation.replace('DoctorsHome');
+          } else if (role === 'Lab') {
+            navigation.replace('LabsHome');
+          } else if (role === 'BloodBank') {
+            navigation.replace('BloodBanksHome');
+          } else if (role === 'Ambulance') {
+            navigation.replace('AmbulanceHome');
+          } else {
+            navigation.replace('Main'); // Default Home
+          }
+
         } else {
           Alert.alert('Login Failed', 'Invalid email/phone or password');
         }
@@ -98,12 +108,12 @@ const Login = ({ navigation }) => {
       phone: phone,
       password: signUpPassword,
       photo: DEFAULT_IMAGE,
+      role: role, // ✅ Save role
     };
 
     try {
       await AsyncStorage.setItem('userData', JSON.stringify(userObject));
       await AsyncStorage.setItem('userProfile', JSON.stringify(userObject));
-
       Alert.alert('Success', 'Account created successfully!');
       setSignUpModalVisible(false);
 
@@ -113,6 +123,7 @@ const Login = ({ navigation }) => {
       setPhone('');
       setSignUpPassword('');
       setConfirmPassword('');
+      setRole('Patient');
     } catch (error) {
       console.error('Signup Error:', error);
       Alert.alert('Error', 'Something went wrong. Please try again.');
@@ -133,7 +144,6 @@ const Login = ({ navigation }) => {
         placeholderTextColor="#999"
       />
 
-      {/* Password input with eye icon */}
       <View style={styles.passwordWrapper}>
         <TextInput
           style={styles.passwordInput}
@@ -190,6 +200,20 @@ const Login = ({ navigation }) => {
             onChangeText={setPhone}
             keyboardType="phone-pad"
           />
+
+          {/* ✅ Role Picker */}
+          <Picker
+            selectedValue={role}
+            onValueChange={(itemValue) => setRole(itemValue)}
+            style={{ marginBottom: 16 }}
+          >
+            <Picker.Item label="Patient" value="Patient" />
+            <Picker.Item label="Doctor" value="Doctor" />
+            <Picker.Item label="Hospital" value="Hospital" />
+            <Picker.Item label="Lab" value="Lab" />
+            <Picker.Item label="Blood Bank" value="BloodBank" />
+            <Picker.Item label="Ambulance" value="Ambulance" />
+          </Picker>
 
           <View style={styles.passwordWrapper}>
             <TextInput
