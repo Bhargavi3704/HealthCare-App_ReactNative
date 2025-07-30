@@ -1,122 +1,111 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList } from 'react-native';
+import React, { useEffect, useState ,useCallback} from 'react';
+import {View,Text,StyleSheet,Image,TouchableOpacity,FlatList,BackHandler,Alert} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ScrollView } from 'react-native-gesture-handler';
+import { useFocusEffect } from '@react-navigation/native';
 
-const DEFAULT_IMAGE = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOJk-ijRB_BPwJHcBC6FdinircAPdW6aHY3A&s';
+const DEFAULT_IMAGE = 'https://cdn-icons-png.flaticon.com/512/3774/3774299.png';
 
-const features = [
+const labFeatures = [
   {
-    name: 'Doctors',
-    icon: 'hand-heart-outline',
-    screen: 'DoctorsCategoriesScreen',
-    color: '#e5f8dc',
+    name: 'Test Bookings',
+    icon: 'flask-outline',
+    screen: 'LabBookings',
+    color: '#ffe4e1',
   },
   {
-    name: 'Appointments',
-    icon: 'calendar-clock-outline',
-    screen: 'AppointmentsScreen',
-    color: '#fef6e4',
-  },
-  {
-    name: 'Reports',
-    icon: 'file-outline',
+    name: 'Upload Reports',
+    icon: 'file-upload-outline',
     screen: 'ReportsScreen',
-    color: '#e8f5ff',
+    color: '#e6f7ff',
   },
   {
-    name: 'Health Tracker',
-    icon: 'heart-pulse',
-    screen: 'HealthTrackerScreen',
-    color: '#fde2e4',
-  },
-  {
-    name: 'Consultation',
-    icon: 'video',
-    screen: 'VideocallBooking',
-    color: '#e0fbfc',
-  },
-  {
-    name: 'Reminders',
-    icon: 'alarm',
-    screen: 'ReminderScreen',
-    color: '#ede7f6',
-  },
-  {
-    name: 'Medicine',
-    icon: 'pill',
-    screen: 'MedicineScreen',
-    color: '#f3e5f5',
-  },
-  {
-    name: 'Blood Bank',
-    icon: 'blood-bag',
-    screen: 'BloodBankScreen',
-    color: '#fdecea',
-  },
-  {
-    name: 'Ambulance',
-    icon: 'ambulance',
-    screen: 'AmbulanceScreen',
-    color: '#e0f7fa',
+    name: 'Lab History',
+    icon: 'history',
+    screen: 'LabHistoryScreen',
+    color: '#f0f0f0',
   },
 ];
 
-const Home = ({ navigation }) => {
-  const [user, setUser] = useState(null);
+const LabsHome = ({ navigation }) => {
+
+  useFocusEffect(
+      useCallback(() => {
+        const onBackPress = () => {
+          Alert.alert('Exit App', 'Are you sure you want to exit?', [
+            { text: 'Cancel', style: 'cancel' },
+            { text: 'Yes', onPress: () => BackHandler.exitApp() },
+          ]);
+          return true; // block default back navigation
+        };
+  
+        const backHandler=BackHandler.addEventListener('hardwareBackPress', onBackPress);
+  
+        return () => {
+         backHandler.remove();
+        };
+        }, [])
+    );
+    
+  const [lab, setLab] = useState(null);
+
   useEffect(() => {
-    const loadUserData = async () => {
+    const loadLabData = async () => {
       const stored = await AsyncStorage.getItem('userProfile');
       if (stored) {
-        setUser(JSON.parse(stored));
+        setLab(JSON.parse(stored));
       }
     };
-    loadUserData();
+    loadLabData();
   }, []);
+
   return (
     <View style={styles.container}>
-      <View style={styles.profileBox}>
-        <Image source={{ uri: user?.photo || DEFAULT_IMAGE }} style={styles.avatar} />
-        <View>
-          <Text style={styles.welcomeText}>Welcome Back</Text>
-          <Text style={styles.username}>{user?.name}</Text>
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.navigate('LabsProfile')}>
+          <Image source={{ uri: lab?.photo || DEFAULT_IMAGE }} style={styles.headerAvatar} />
+        </TouchableOpacity>
+        <View style={styles.headerTextContainer}>
+          <Text style={styles.headerWelcome}>Welcome</Text>
+          <Text style={styles.headerName}>{lab?.name || 'Lab Expert'}</Text>
         </View>
       </View>
-      <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
-        <FlatList
-          data={features}
-          keyExtractor={(item) => item.name}
-          numColumns={2}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={[styles.card, { backgroundColor: item.color }]}
-              onPress={() => navigation.navigate(item.screen)}
-            >
-              <Icon name={item.icon} size={43} color="#007AFF" />
-              <Text style={styles.cardText}>{item.name}</Text>
-            </TouchableOpacity>
-          )}
-        />
-      </ScrollView>
+
+      {/* Cards */}
+      <FlatList
+        data={labFeatures}
+        keyExtractor={(item) => item.name}
+        numColumns={2}
+        contentContainerStyle={{ paddingBottom: 80 }}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={[styles.card, { backgroundColor: item.color }]}
+            onPress={() => navigation.navigate(item.screen)}
+          >
+            <Icon name={item.icon} size={40} color="#007AFF" />
+            <Text style={styles.cardText}>{item.name}</Text>
+          </TouchableOpacity>
+        )}
+      />
     </View>
   );
 };
 
-export default Home;
+export default LabsHome;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5fbff',
     paddingHorizontal: 16,
-    paddingTop: 24,
+    paddingTop: 20,
   },
-  profileBox: {
+  header: {
+    marginBottom: 25,
     backgroundColor: '#d5f3ff',
     padding: 16,
     borderRadius: 12,
-    marginBottom: 25,
     marginVertical: 20,
     flexDirection: 'row',
     alignItems: 'center',
@@ -125,20 +114,25 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
   },
-  avatar: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
+  headerAvatar: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
     marginRight: 12,
+    borderWidth: 2,
+    borderColor: '#007AFF',
   },
-  welcomeText: {
+  headerTextContainer: {
+    flexDirection: 'column',
+  },
+  headerWelcome: {
     fontSize: 16,
     color: '#666',
   },
-  username: {
-    fontSize: 18,
+  headerName: {
+    fontSize: 19,
     fontWeight: 'bold',
-    color: '#222',
+    color: '#007AFF',
   },
   card: {
     width: '47%',
