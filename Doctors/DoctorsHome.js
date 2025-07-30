@@ -1,14 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  FlatList,
-} from 'react-native';
+import React, { useEffect, useState,useCallback} from 'react';
+import {View,Text,StyleSheet,Image,TouchableOpacity,FlatList,BackHandler,Alert} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
+
 
 const DEFAULT_IMAGE = 'https://cdn-icons-png.flaticon.com/512/3774/3774299.png';
 
@@ -34,6 +29,25 @@ const doctorFeatures = [
 ];
 
 const DoctorsHome = ({ navigation }) => {
+
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        Alert.alert('Exit App', 'Are you sure you want to exit?', [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Yes', onPress: () => BackHandler.exitApp() },
+        ]);
+        return true; // block default back navigation
+      };
+
+      const backHandler=BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () => {
+       backHandler.remove();
+      };
+      }, [])
+  );
+
   const [doctor, setDoctor] = useState(null);
 
   useEffect(() => {
@@ -53,7 +67,7 @@ const DoctorsHome = ({ navigation }) => {
           <Image source={{ uri: doctor?.photo || DEFAULT_IMAGE }} style={styles.headerAvatar} />
         </TouchableOpacity>
         <View style={styles.headerTextContainer}>
-          <Text style={styles.headerWelcome}>Welcome,</Text>
+          <Text style={styles.headerWelcome}>Welcome</Text>
           <Text style={styles.headerName}>{doctor?.name || 'Dr. John Doe'}</Text>
         </View>
       </View>
@@ -117,7 +131,7 @@ const styles = StyleSheet.create({
     color: '#666',
   },
   headerName: {
-    fontSize: 20,
+    fontSize: 19,
     fontWeight: 'bold',
     color: '#007AFF',
   },
